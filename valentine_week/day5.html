@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise Day 🤝</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-pink-400 to-purple-500 text-white font-sans">
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-5xl font-bold mb-4">🤝 Promise Generator</h1>
+    <p class="text-lg mb-8 text-center">Click the button below to receive a sweet promise! 💕</p>
+    <div id="promise-container" class="bg-white/20 rounded-lg p-8 shadow-lg text-center">
+      <p id="promise-text" class="text-2xl font-semibold mb-6">Click the button to get your first promise! ✨</p>
+      <button id="generate-promise-btn" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+        Generate Promise 💖
+      </button>
+    </div>
+    <a href="day6.html" class="mt-8">
+      <button id="next-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105">
+        Next Day 🌟
+      </button>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const promiseText = document.getElementById('promise-text');
+      const generatePromiseBtn = document.getElementById('generate-promise-btn');
+
+      const promises = [
+        "I promise to always make you smile. 😊",
+        "I promise to be your biggest supporter. 🌟",
+        "I promise to bring you chocolates every week! 🍫",
+        "I promise to listen to you, always. 🥰",
+        "I promise to cherish every moment with you. 💖",
+        "I promise to be your partner in all adventures. 🌍",
+        "I promise to love you more each day. ❤️",
+        "I promise to be there through thick and thin. 🤗",
+        "I promise to never let you face life alone. 🌸",
+        "I promise to hold your hand forever. 🤝"
+      ];
+
+      generatePromiseBtn.addEventListener('click', () => {
+        const randomIndex = Math.floor(Math.random() * promises.length);
+        promiseText.textContent = promises[randomIndex];
+        promiseText.classList.add('fade-in');
+        setTimeout(() => promiseText.classList.remove('fade-in'), 1000);
+
+        // Trigger confetti effect
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

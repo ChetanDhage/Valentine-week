@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hug Day 🫂</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    .hug {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-pink-400 to-purple-500 text-white font-sans">
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-5xl font-bold mb-4">🫂 Virtual Hug Collector</h1>
+    <p class="text-lg mb-8 text-center">Click on as many hugs as you can in 30 seconds! Let's see how many hugs you can collect! 💕</p>
+    <div id="hug-game-area" class="relative w-full max-w-2xl h-96 bg-white/20 rounded-lg border-2 border-white/30 overflow-hidden">
+      <p id="hug-score" class="text-xl font-semibold mt-4">Hugs Collected: <span id="hug-count">0</span></p>
+      <p id="hug-timer" class="text-xl font-semibold mt-2">Time Left: <span id="hug-time">30</span>s</p>
+      <p id="hug-game-over" class="hidden text-2xl font-bold mt-4">🎉 You collected all the hugs! 🥰</p>
+      <a href="day7.html" id="hug-next-btn" class="hidden mt-6">
+        <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105">
+          Next Day 🌟
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const hugGameArea = document.getElementById('hug-game-area');
+      const hugCount = document.getElementById('hug-count');
+      const hugTimer = document.getElementById('hug-time');
+      const hugGameOver = document.getElementById('hug-game-over');
+      const hugNextBtn = document.getElementById('hug-next-btn');
+
+      let score = 0;
+      let timeLeft = 30;
+      let timerInterval;
+      let hugInterval;
+
+      // Create a hug
+      function createHug() {
+        const hug = document.createElement('div');
+        hug.classList.add('hug', 'absolute', 'w-16', 'h-16', 'bg-[url("https://www.freepnglogos.com/uploads/teddy-bear-png/teddy-bear-png-transparent-images-png-only-28.png")]', 'bg-cover', 'cursor-pointer');
+        hug.style.top = Math.random() * 70 + '%'; // Adjusted to stay within the game area
+        hug.style.left = Math.random() * 90 + '%'; // Adjusted to stay within the game area
+        hugGameArea.appendChild(hug);
+
+        hug.addEventListener('click', () => {
+          hug.remove();
+          score++;
+          hugCount.textContent = score;
+
+          // Trigger confetti effect
+          confetti({
+            particleCount: 50,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+
+          if (score >= 20) {
+            clearInterval(timerInterval);
+            clearInterval(hugInterval);
+            hugGameOver.classList.remove('hidden');
+            hugNextBtn.classList.remove('hidden');
+          }
+        });
+
+        setTimeout(() => {
+          hug.remove();
+        }, 3000); // Hugs disappear after 3 seconds
+      }
+
+      // Start the game
+      function startGame() {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          hugTimer.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            clearInterval(hugInterval);
+            hugGameOver.textContent = "💔 Time's up! Try again!";
+            hugGameOver.classList.remove('hidden');
+          }
+        }, 1000);
+
+        hugInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            createHug();
+          } else {
+            clearInterval(hugInterval);
+          }
+        }, 800); // Hugs appear every 800ms
+      }
+
+      startGame();
+    });
+  </script>
+</body>
+</html>

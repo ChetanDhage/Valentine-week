@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rose Day Memory Match 🌹</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-500 to-pink-300 text-white font-poppins min-h-screen flex items-center justify-center">
+  <div class="text-center space-y-6">
+    <h1 class="text-4xl font-bold">🌹 Rose Day Memory Match</h1>
+    <div class="flex justify-center space-x-10">
+      <div class="text-lg">Time Left: <span id="timer">60</span>s</div>
+      <div class="text-lg">Score: <span id="score">0</span></div>
+    </div>
+    <div id="grid" class="grid grid-cols-4 gap-4 max-w-md mx-auto mt-4">
+      <!-- Cards will be dynamically generated here -->
+    </div>
+    <p id="message" class="hidden text-lg font-medium mt-4">🎉 Congratulations! You matched all the cards! 🌹</p>
+    <a href="day2.html" id="next-btn" class="hidden">
+      <button class="mt-4 bg-pink-700 hover:bg-pink-600 transition transform hover:scale-105 text-white font-medium py-2 px-6 rounded-full">
+        Next Level 💖
+      </button>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('grid');
+      const timerDisplay = document.getElementById('timer');
+      const scoreDisplay = document.getElementById('score');
+      const message = document.getElementById('message');
+      const nextBtn = document.getElementById('next-btn');
+
+      let cards = [];
+      let flippedCards = [];
+      let matchedCards = [];
+      let score = 0;
+      let timeLeft = 60;
+      let timer;
+
+      const symbols = ['🌹', '💐', '🌸', '🌺', '🌷', '🥀', '🌼', '🌻'];
+      const cardPairs = [...symbols, ...symbols];
+
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      function createGrid() {
+        grid.innerHTML = '';
+        const shuffledCards = shuffle(cardPairs);
+        shuffledCards.forEach((symbol, index) => {
+          const card = document.createElement('div');
+          card.classList.add('card', 'w-24', 'h-24', 'bg-pink-400', 'rounded-lg', 'flex', 'items-center', 'justify-center', 'cursor-pointer', 'text-2xl', 'transition', 'transform', 'hover:scale-105');
+          card.dataset.symbol = symbol;
+          card.dataset.index = index;
+          card.addEventListener('click', flipCard);
+          grid.appendChild(card);
+        });
+      }
+
+      function flipCard() {
+        if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+          this.classList.add('flipped', 'bg-pink-600');
+          this.textContent = this.dataset.symbol;
+          flippedCards.push(this);
+
+          if (flippedCards.length === 2) {
+            checkMatch();
+          }
+        }
+      }
+
+      function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.symbol === card2.dataset.symbol) {
+          card1.classList.add('matched', 'bg-green-500', 'cursor-default');
+          card2.classList.add('matched', 'bg-green-500', 'cursor-default');
+          matchedCards.push(card1, card2);
+          score += 10;
+          scoreDisplay.textContent = score;
+
+          if (matchedCards.length === cardPairs.length) {
+            clearInterval(timer);
+            message.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+          }
+        } else {
+          setTimeout(() => {
+            card1.classList.remove('flipped', 'bg-pink-600');
+            card2.classList.remove('flipped', 'bg-pink-600');
+            card1.textContent = '';
+            card2.textContent = '';
+          }, 1000);
+        }
+        flippedCards = [];
+      }
+
+      function startTimer() {
+        timer = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            alert('Time is up! Try again!');
+            resetGame();
+          }
+        }, 1000);
+      }
+
+      function resetGame() {
+        timeLeft = 60;
+        score = 0;
+        matchedCards = [];
+        flippedCards = [];
+        scoreDisplay.textContent = score;
+        timerDisplay.textContent = timeLeft;
+        createGrid();
+        startTimer();
+      }
+
+      createGrid();
+      startTimer();
+    });
+  </script>
+</body>
+</html>

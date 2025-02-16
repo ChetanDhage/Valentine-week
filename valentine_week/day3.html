@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chocolate Clicker Game 🍫🖱️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-[#8b4513] to-[#d2691e] text-white font-[Poppins] text-center h-screen flex flex-col items-center justify-center overflow-hidden">
+  <div class="game-container">
+    <h1 class="text-4xl font-bold mb-2">🍫 Chocolate Clicker Game 🖱️</h1>
+    <p class="text-lg mb-4">Click on the falling chocolates to collect them!</p>
+    
+    <div id="game-area" class="w-full max-w-lg h-96 bg-white/10 border-2 border-white rounded-lg relative overflow-hidden mb-4"></div>
+    
+    <p id="score" class="text-lg">Score: <span id="score-value" class="font-bold">0</span></p>
+    <p id="timer" class="text-lg">Time Left: <span id="time-left" class="font-bold">30</span>s</p>
+    
+    <p id="game-over" class="text-xl text-yellow-300 hidden">🎉 You collected enough chocolates! Great job! 🥳</p>
+    <a href="day4.html" id="next-btn" class="hidden">
+      <button class="bg-[#a0522d] hover:bg-[#8b4513] text-white py-2 px-8 mt-4 rounded-full transition-transform transform hover:scale-110">Next Day 🌟</button>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gameArea = document.getElementById('game-area');
+      const scoreValue = document.getElementById('score-value');
+      const timerDisplay = document.getElementById('time-left');
+      const gameOver = document.getElementById('game-over');
+      const nextBtn = document.getElementById('next-btn');
+
+      let score = 0;
+      let timeLeft = 30;
+      let timer;
+      let gameActive = true;
+
+      function createChocolate() {
+        if (!gameActive) return;
+
+        const chocolate = document.createElement('div');
+        chocolate.classList.add('absolute', 'w-12', 'h-12', 'bg-cover', 'cursor-pointer', 'animate-fall');
+        chocolate.style.backgroundImage = "url('https://www.freepnglogos.com/uploads/teddy-bear-png/teddy-bear-png-transparent-images-png-only-28.png')";
+        chocolate.style.left = Math.random() * (gameArea.clientWidth - 50) + 'px';
+        chocolate.style.animationDuration = Math.random() * 2 + 1 + 's';
+        gameArea.appendChild(chocolate);
+
+        chocolate.addEventListener('click', () => {
+          if (!gameActive) return;
+          chocolate.remove();
+          score++;
+          scoreValue.textContent = score;
+          if (score >= 10) {
+            gameActive = false;
+            clearInterval(timer);
+            gameOver.textContent = "🎉 You collected enough chocolates! Great job! 🥳";
+            gameOver.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+          }
+        });
+
+        setTimeout(() => {
+          if (chocolate.parentElement) {
+            chocolate.remove();
+          }
+        }, 3000);
+      }
+
+      function startGame() {
+        timer = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            gameActive = false;
+            clearInterval(timer);
+            gameOver.textContent = "💔 Time's up! Try again!";
+            gameOver.classList.remove('hidden');
+          }
+        }, 1000);
+
+        setInterval(createChocolate, 1000);
+      }
+
+      startGame();
+    });
+  </script>
+
+  <style>
+    @keyframes fall {
+      to {
+        transform: translateY(400px);
+      }
+    }
+    .animate-fall {
+      animation: fall linear;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propose Day 💍</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-400 to-red-400 text-white font-poppins h-screen overflow-hidden flex items-center justify-center">
+  <!-- Romantic background animation -->
+  <div class="absolute inset-0 z-[-1] overflow-hidden">
+    <div class="absolute w-5 h-5 bg-cover bg-center animate-fall" style="background-image: url('https://www.freepnglogos.com/uploads/heart-png/heart-png-heart-svg-png-icon-download-1.png'); left: 5%; animation-delay: 0s;"></div>
+    <div class="absolute w-5 h-5 bg-cover bg-center animate-fall" style="background-image: url('https://www.freepnglogos.com/uploads/heart-png/heart-png-heart-svg-png-icon-download-1.png'); left: 15%; animation-delay: 2s;"></div>
+    <div class="absolute w-5 h-5 bg-cover bg-center animate-fall" style="background-image: url('https://www.freepnglogos.com/uploads/heart-png/heart-png-heart-svg-png-icon-download-1.png'); left: 25%; animation-delay: 4s;"></div>
+    <div class="absolute w-5 h-5 bg-cover bg-center animate-fall" style="background-image: url('https://www.freepnglogos.com/uploads/heart-png/heart-png-heart-svg-png-icon-download-1.png'); left: 35%; animation-delay: 6s;"></div>
+  </div>
+
+  <div class="game-container text-center space-y-6">
+    <h1 class="text-4xl font-bold">💍 Propose Day Challenge</h1>
+    <p class="text-xl">Type this proposal: <span id="target-text" class="font-bold text-yellow-300">"I love you!"</span></p>
+    <textarea id="proposal-input" rows="3" placeholder="Type here..." class="w-4/5 max-w-md p-3 text-gray-800 border-2 border-pink-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400"></textarea>
+    
+    <div id="progress-bar" class="w-4/5 max-w-md h-2 bg-gray-300 rounded-full overflow-hidden">
+      <div id="progress" class="h-full bg-green-500 transition-all"></div>
+    </div>
+    
+    <p id="timer" class="text-lg">Time left: <span id="time-left">10</span> seconds</p>
+    <p id="message" class="hidden text-lg text-yellow-300 font-semibold"></p>
+    <a href="day3.html" id="next-btn" class="hidden">
+      <button class="bg-pink-600 text-white py-2 px-5 rounded-full hover:bg-pink-500 transform hover:scale-110 transition-all">Next Day 🌟</button>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const targetText = document.getElementById('target-text').innerText;
+      const input = document.getElementById('proposal-input');
+      const message = document.getElementById('message');
+      const nextBtn = document.getElementById('next-btn');
+      const timerDisplay = document.getElementById('time-left');
+      const progressBar = document.getElementById('progress');
+
+      let timeLeft = 10;
+      let timer = setInterval(countdown, 1000);
+
+      function countdown() {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          input.disabled = true;
+          if (input.value.trim() !== targetText) {
+            message.textContent = "💔 Time's up! Try again!";
+            message.classList.remove('hidden');
+          }
+        }
+      }
+
+      input.addEventListener('input', () => {
+        const typedText = input.value.trim();
+        const progress = (typedText.length / targetText.length) * 100;
+        progressBar.style.width = `${progress}%`;
+
+        if (typedText === targetText) {
+          clearInterval(timer);
+          message.textContent = "❤️ You did it! Your proposal is perfect! 💖";
+          message.classList.remove('hidden');
+          nextBtn.classList.remove('hidden');
+          input.disabled = true;
+        }
+      });
+    });
+  </script>
+
+  <style>
+    @keyframes fall {
+      0% { transform: translateY(-10%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+    .animate-fall {
+      animation: fall 5s linear infinite;
+    }
+  </style>
+</body>
+</html>

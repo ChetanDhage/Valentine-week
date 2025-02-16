@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teddy Day 🧸</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    .teddy {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-pink-400 to-purple-500 text-white font-sans">
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-5xl font-bold mb-4">🧸 Teddy Catching Game</h1>
+    <p class="text-lg mb-8">Click on the flying teddies to collect them! Can you catch 10 teddies?</p>
+    <div id="teddy-game-area" class="relative w-full max-w-2xl h-96 bg-white/20 rounded-lg border-2 border-white/30 overflow-hidden">
+      <p id="score" class="text-xl font-semibold mt-4">Score: <span id="teddy-score-value">0</span></p>
+      <p id="timer" class="text-xl font-semibold mt-2">Time Left: <span id="time-left">30</span>s</p>
+      <p id="teddy-game-over" class="hidden text-2xl font-bold mt-4">🎉 Yay! You caught all the teddies! 🥰</p>
+      <a href="day5.html" id="teddy-next-btn" class="hidden mt-6">
+        <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105">
+          Next Day 🌟
+        </button>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const teddyGameArea = document.getElementById('teddy-game-area');
+      const teddyScoreValue = document.getElementById('teddy-score-value');
+      const teddyGameOver = document.getElementById('teddy-game-over');
+      const teddyNextBtn = document.getElementById('teddy-next-btn');
+      const timerDisplay = document.getElementById('time-left');
+
+      let score = 0;
+      const totalTeddies = 10;
+      let timeLeft = 30;
+      let timer;
+
+      // Start the timer
+      function startTimer() {
+        timer = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            teddyGameOver.textContent = "💔 Time's up! Try again!";
+            teddyGameOver.classList.remove('hidden');
+          }
+        }, 1000);
+      }
+
+      // Create a teddy
+      function createTeddy() {
+        const teddy = document.createElement('div');
+        teddy.classList.add('teddy', 'absolute', 'w-16', 'h-16', 'bg-[url("https://www.freepnglogos.com/uploads/teddy-bear-png/teddy-bear-png-transparent-images-png-only-28.png")]', 'bg-cover', 'cursor-pointer');
+        teddy.style.top = Math.random() * 80 + '%';
+        teddy.style.left = Math.random() * 80 + '%';
+        teddyGameArea.appendChild(teddy);
+
+        teddy.addEventListener('click', () => {
+          teddy.remove();
+          score++;
+          teddyScoreValue.textContent = score;
+          if (score === totalTeddies) {
+            clearInterval(timer);
+            teddyGameOver.classList.remove('hidden');
+            teddyNextBtn.classList.remove('hidden');
+          }
+        });
+
+        setTimeout(() => {
+          teddy.remove();
+        }, 5000);
+      }
+
+      // Start the game
+      function startGame() {
+        startTimer();
+        for (let i = 0; i < totalTeddies; i++) {
+          setTimeout(createTeddy, i * 1000);
+        }
+      }
+
+      startGame();
+    });
+  </script>
+</body>
+</html>

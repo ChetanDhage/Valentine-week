@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiss Memory Match Game 💋🧩</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes flip {
+      0% { transform: rotateY(0); }
+      50% { transform: rotateY(90deg); }
+      100% { transform: rotateY(180deg); }
+    }
+
+    .card.flipped {
+      animation: flip 0.5s ease-in-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-pink-400 to-purple-500 text-white font-sans">
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-5xl font-bold mb-4">💋 Kiss Memory Match Game 🧩</h1>
+    <p class="text-lg mb-8 text-center">Match pairs of kisses and romantic symbols before time runs out! 💕</p>
+    <div id="game-area" class="grid grid-cols-4 gap-4 w-full max-w-2xl">
+      <!-- Cards will be dynamically generated here -->
+    </div>
+    <p id="score" class="text-xl font-semibold mt-6">Score: <span id="score-value">0</span></p>
+    <p id="timer" class="text-xl font-semibold mt-2">Time Left: <span id="time-left">60</span>s</p>
+    <p id="game-over" class="hidden text-2xl font-bold mt-4">🎉 You matched all the pairs! Here's your surprise! 🎁</p>
+    <a href="surprise.html" id="next-btn" class="hidden mt-6">
+      <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105">
+        Claim Your Surprise! 🎉
+      </button>
+    </a>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gameArea = document.getElementById('game-area');
+      const scoreValue = document.getElementById('score-value');
+      const timerDisplay = document.getElementById('time-left');
+      const gameOver = document.getElementById('game-over');
+      const nextBtn = document.getElementById('next-btn');
+
+      let score = 0;
+      let timeLeft = 60;
+      let flippedCards = [];
+      let matchedCards = [];
+      let timer;
+
+      // Symbols for the cards
+      const symbols = ['💋', '💖', '😘', '💌', '💕', '🥰'];
+      const cardPairs = [...symbols, ...symbols]; // Duplicate for pairs
+
+      // Shuffle the cards
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      // Create the card grid
+      function createGrid() {
+        gameArea.innerHTML = '';
+        const shuffledCards = shuffle(cardPairs);
+        shuffledCards.forEach((symbol, index) => {
+          const card = document.createElement('div');
+          card.classList.add('card', 'bg-white/20', 'rounded-lg', 'flex', 'items-center', 'justify-center', 'text-4xl', 'cursor-pointer', 'transition-all', 'transform', 'hover:scale-105');
+          card.dataset.symbol = symbol;
+          card.dataset.index = index;
+          card.textContent = '❓'; // Default face-down symbol
+          card.addEventListener('click', flipCard);
+          gameArea.appendChild(card);
+        });
+      }
+
+      // Flip a card
+      function flipCard() {
+        if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+          this.classList.add('flipped');
+          this.textContent = this.dataset.symbol;
+          flippedCards.push(this);
+
+          if (flippedCards.length === 2) {
+            checkMatch();
+          }
+        }
+      }
+
+      // Check if the flipped cards match
+      function checkMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.symbol === card2.dataset.symbol) {
+          card1.classList.add('matched');
+          card2.classList.add('matched');
+          matchedCards.push(card1, card2);
+          score += 10;
+          scoreValue.textContent = score;
+
+          if (matchedCards.length === cardPairs.length) {
+            clearInterval(timer);
+            gameOver.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 }
+            });
+          }
+        } else {
+          setTimeout(() => {
+            card1.classList.remove('flipped');
+            card2.classList.remove('flipped');
+            card1.textContent = '❓';
+            card2.textContent = '❓';
+          }, 1000);
+        }
+        flippedCards = [];
+      }
+
+      // Start the game
+      function startGame() {
+        createGrid();
+        timer = setInterval(() => {
+          timeLeft--;
+          timerDisplay.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            gameOver.textContent = "💔 Time's up! Try again!";
+            gameOver.classList.remove('hidden');
+          }
+        }, 1000);
+      }
+
+      startGame();
+    });
+  </script>
+</body>
+</html>
